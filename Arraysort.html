@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bubble Sort Visualizer</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: white;
+        text-align: center;
+        padding: 20px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    #controls {
+        margin-bottom: 20px;
+    }
+
+    button {
+        padding: 10px 16px;
+        margin: 0 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        background: #2563eb;
+        color: white;
+    }
+
+    button:disabled {
+        background: #64748b;
+        cursor: not-allowed;
+    }
+
+    #container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        height: 350px;
+        gap: 6px;
+        margin-top: 30px;
+    }
+
+    .bar {
+        width: 20px;
+        background: #38bdf8;
+        transition: height 0.3s ease, background-color 0.3s ease;
+        border-radius: 4px 4px 0 0;
+    }
+
+    .compare {
+        background: #ef4444; /* Red */
+    }
+
+    .sorted {
+        background: #facc15; /* Gold */
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Bubble Sort Visualizer</h1>
+
+<div id="controls">
+    <button id="generate">Generate New Array</button>
+    <button id="sort">Start Sort</button>
+</div>
+
+<div id="container"></div>
+
+<script>
+    const container = document.getElementById("container");
+    const generateBtn = document.getElementById("generate");
+    const sortBtn = document.getElementById("sort");
+
+    let array = [];
+    const BAR_COUNT = 20;
+
+    // Sleep utility (async delay)
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Generate random array
+    function generateArray() {
+        container.innerHTML = "";
+        array = [];
+
+        for (let i = 0; i < BAR_COUNT; i++) {
+            const value = Math.floor(Math.random() * 250) + 50;
+            array.push(value);
+
+            const bar = document.createElement("div");
+            bar.classList.add("bar");
+            bar.style.height = `${value}px`;
+            container.appendChild(bar);
+        }
+    }
+
+    // Bubble Sort Visualization
+    async function bubbleSort() {
+        const bars = document.querySelectorAll(".bar");
+        sortBtn.disabled = true;
+        generateBtn.disabled = true;
+
+        for (let i = 0; i < array.length - 1; i++) {
+            for (let j = 0; j < array.length - i - 1; j++) {
+
+                // Comparing
+                bars[j].classList.add("compare");
+                bars[j + 1].classList.add("compare");
+
+                await sleep(100);
+
+                if (array[j] > array[j + 1]) {
+                    // Swap values
+                    [array[j], array[j + 1]] = [array[j + 1], array[j]];
+
+                    // Swap heights
+                    bars[j].style.height = `${array[j]}px`;
+                    bars[j + 1].style.height = `${array[j + 1]}px`;
+                }
+
+                bars[j].classList.remove("compare");
+                bars[j + 1].classList.remove("compare");
+            }
+
+            // Mark sorted element
+            bars[array.length - i - 1].classList.add("sorted");
+        }
+
+        // First element also sorted
+        bars[0].classList.add("sorted");
+
+        sortBtn.disabled = false;
+        generateBtn.disabled = false;
+    }
+
+    generateBtn.addEventListener("click", generateArray);
+    sortBtn.addEventListener("click", bubbleSort);
+
+    // Initial load
+    generateArray();
+</script>
+
+</body>
+</html>
